@@ -1,0 +1,36 @@
+/* src/components/Navbar.css */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position:relative;
+  }
+  
+  .nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nav-toggle {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .nav-toggle {
+      display: block;
+    }
+    .nav-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+    }
+    .nav-menu.open {
+      display: flex;
+    }
+  }

@@ -1,0 +1,10 @@
+/* src/components/Layout.css */
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 93vh;
+  }
+  
+  main {
+    flex: 1;
+  }
