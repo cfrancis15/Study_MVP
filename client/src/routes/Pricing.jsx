@@ -1,12 +1,18 @@
 import { PricingTable } from '@clerk/clerk-react';
-
-
+import './Pricing.css';
 
 export default function PricingPage(){
     return(
-        <div>
-            <h1>Choose your plan</h1>
-            <PricingTable/>
+        <div className="pricing-container">
+            <div className="pricing-header">
+                <h1 className="pricing-title">Choose Your Plan</h1>
+                <p className="pricing-subtitle">
+                    Select the perfect plan for your learning journey. All plans include access to our AI-powered study coach.
+                </p>
+            </div>
+            <div className="pricing-content">
+                <PricingTable/>
+            </div>
         </div>
     )
 }

@@ -10,7 +10,7 @@ export default function Navbar() {
 
   return (
     <nav className="nav">
-      <Link to="/">Your SaaS</Link>
+      <Link to="/">Study Coach</Link>
       <button className="nav-toggle" onClick={() => setOpen(!open)}>☰</button>
       <ul className={`nav-menu ${open ? 'open' : ''}`}>
         <li><Link to="/">Home</Link></li>

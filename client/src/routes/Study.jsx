@@ -2,6 +2,7 @@ import { useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 // Import worker as a URL for Vite
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import './Study.css';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
@@ -45,171 +46,6 @@ function Study() {
   
   // Error state
   const [error, setError] = useState("");
-
-  // Simple inline styles
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
-      padding: '32px 16px',
-    },
-    wrapper: {
-      maxWidth: '900px',
-      margin: '0 auto',
-    },
-    header: {
-      textAlign: 'center',
-      marginBottom: '32px',
-    },
-    title: {
-      fontSize: '36px',
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: '8px',
-    },
-    subtitle: {
-      color: '#666',
-      fontSize: '16px',
-    },
-    card: {
-      background: 'white',
-      borderRadius: '8px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      padding: '32px',
-      marginBottom: '24px',
-    },
-    heading: {
-      fontSize: '24px',
-      fontWeight: '600',
-      color: '#333',
-      marginBottom: '16px',
-    },
-    text: {
-      color: '#666',
-      marginBottom: '24px',
-      lineHeight: '1.6',
-    },
-    input: {
-      width: '100%',
-      padding: '12px',
-      border: '1px solid #ddd',
-      borderRadius: '6px',
-      fontSize: '16px',
-      fontFamily: 'inherit',
-      resize: 'vertical',
-    },
-    textarea: {
-      width: '100%',
-      padding: '12px',
-      border: '1px solid #ddd',
-      borderRadius: '6px',
-      fontSize: '16px',
-      fontFamily: 'inherit',
-      resize: 'vertical',
-      minHeight: '100px',
-    },
-    button: {
-      width: '100%',
-      padding: '12px 24px',
-      background: '#4f46e5',
-      color: 'white',
-      border: 'none',
-      borderRadius: '6px',
-      fontSize: '16px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      marginTop: '24px',
-    },
-    buttonDisabled: {
-      background: '#999',
-      cursor: 'not-allowed',
-    },
-    buttonHover: {
-      background: '#4338ca',
-    },
-    errorBox: {
-      padding: '16px',
-      background: '#fee',
-      border: '1px solid #fcc',
-      borderRadius: '6px',
-      color: '#c33',
-      marginBottom: '24px',
-    },
-    successBox: {
-      padding: '16px',
-      background: '#efe',
-      border: '1px solid #cfc',
-      borderRadius: '6px',
-      color: '#3c3',
-      marginTop: '16px',
-    },
-    progressContainer: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: '32px',
-    },
-    progressStep: {
-      display: 'flex',
-      alignItems: 'center',
-      flex: 1,
-    },
-    progressCircle: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontWeight: '600',
-      fontSize: '16px',
-    },
-    progressLine: {
-      flex: 1,
-      height: '4px',
-      margin: '0 8px',
-    },
-    passageBox: {
-      padding: '24px',
-      background: '#f9f9f9',
-      borderRadius: '6px',
-      border: '1px solid #e0e0e0',
-      marginBottom: '24px',
-    },
-    passageTitle: {
-      fontWeight: '600',
-      fontSize: '18px',
-      color: '#333',
-      marginBottom: '12px',
-    },
-    passageText: {
-      color: '#555',
-      lineHeight: '1.8',
-      whiteSpace: 'pre-wrap',
-    },
-    scoreBadge: {
-      padding: '6px 12px',
-      borderRadius: '20px',
-      fontSize: '14px',
-      fontWeight: '600',
-    },
-    uploadArea: {
-      border: '2px dashed #ccc',
-      borderRadius: '8px',
-      padding: '48px',
-      textAlign: 'center',
-      cursor: 'pointer',
-    },
-    spinner: {
-      border: '3px solid #f3f3f3',
-      borderTop: '3px solid #4f46e5',
-      borderRadius: '50%',
-      width: '32px',
-      height: '32px',
-      animation: 'spin 1s linear infinite',
-      margin: '16px auto',
-    },
-  };
 
   /**
    * Extract text from uploaded PDF file
@@ -425,100 +261,103 @@ function Study() {
     setError("");
   };
 
-  // Helper to get progress circle style
-  const getProgressCircleStyle = (s, i) => {
+  // Helper to get progress circle className
+  const getProgressCircleClass = (s, i) => {
     const stages = ["upload", "goal", "reading", "quiz", "feedback"];
     const currentIndex = stages.indexOf(stage);
     
+    let baseClass = "study-progress-circle";
     if (stage === s) {
-      return { ...styles.progressCircle, background: '#4f46e5', color: 'white' };
+      return `${baseClass} active`;
     } else if (currentIndex > i) {
-      return { ...styles.progressCircle, background: '#22c55e', color: 'white' };
+      return `${baseClass} completed`;
     } else {
-      return { ...styles.progressCircle, background: '#d1d5db', color: '#666' };
+      return `${baseClass} pending`;
     }
   };
 
-  // Helper to get progress line style
-  const getProgressLineStyle = (i) => {
+  // Helper to get progress line className
+  const getProgressLineClass = (i) => {
     const stages = ["upload", "goal", "reading", "quiz", "feedback"];
     const currentIndex = stages.indexOf(stage);
     
+    let baseClass = "study-progress-line";
     if (currentIndex > i) {
-      return { ...styles.progressLine, background: '#22c55e' };
+      return `${baseClass} completed`;
     } else {
-      return { ...styles.progressLine, background: '#d1d5db' };
+      return `${baseClass} pending`;
     }
   };
 
-  // Helper to get score badge style
-  const getScoreBadgeStyle = (score) => {
+  // Helper to get score badge className
+  const getScoreBadgeClass = (score) => {
     const numScore = typeof score === 'number' ? score : parseFloat(score);
+    let baseClass = "study-score-badge";
     if (numScore >= 0.8) {
-      return { ...styles.scoreBadge, background: '#dcfce7', color: '#166534' };
+      return `${baseClass} excellent`;
     } else if (numScore >= 0.6) {
-      return { ...styles.scoreBadge, background: '#fef3c7', color: '#92400e' };
+      return `${baseClass} good`;
     } else {
-      return { ...styles.scoreBadge, background: '#fee2e2', color: '#991b1b' };
+      return `${baseClass} needs-improvement`;
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.wrapper}>
+    <div className="study-container">
+      <div className="study-wrapper">
         {/* Header */}
-        <div style={styles.header}>
-          <h1 style={styles.title}>Study Coach</h1>
-          <p style={styles.subtitle}>Practice active recall to deepen your understanding</p>
+        <div className="study-header">
+          <h1 className="study-title">Study Coach</h1>
+          <p className="study-subtitle">Practice active recall to deepen your understanding</p>
         </div>
 
         {/* Progress Indicator */}
-        <div style={styles.progressContainer}>
+        <div className="study-progress-container">
           {["upload", "goal", "reading", "quiz", "feedback"].map((s, i) => (
-            <div key={s} style={styles.progressStep}>
-              <div style={getProgressCircleStyle(s, i)}>
+            <div key={s} className="study-progress-step">
+              <div className={getProgressCircleClass(s, i)}>
                 {i + 1}
               </div>
-              {i < 4 && <div style={getProgressLineStyle(i)} />}
+              {i < 4 && <div className={getProgressLineClass(i)} />}
             </div>
           ))}
         </div>
 
         {/* Error Display */}
         {error && (
-          <div style={styles.errorBox}>
+          <div className="study-error-box">
             {error}
           </div>
         )}
 
         {/* Stage 1: Upload */}
         {stage === "upload" && (
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Step 1: Upload Your Study Material</h2>
-            <p style={styles.text}>Upload a PDF document to begin your study session.</p>
+          <div className="study-card">
+            <h2 className="study-heading">Step 1: Upload Your Study Material</h2>
+            <p className="study-text">Upload a PDF document to begin your study session.</p>
             
-            <div style={styles.uploadArea}>
+            <div className="study-upload-area">
               <input
                 type="file"
                 accept="application/pdf"
                 onChange={handleFileUpload}
-                style={{ display: 'none' }}
+                className="study-hidden"
                 id="pdf-upload"
                 disabled={isExtracting}
               />
-              <label htmlFor="pdf-upload" style={{ cursor: 'pointer' }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
-                <div style={{ fontSize: '18px', fontWeight: '500', color: '#333', marginBottom: '16px' }}>
+              <label htmlFor="pdf-upload">
+                <div className="study-upload-icon">📄</div>
+                <div className="study-upload-text">
                   {isExtracting ? "Extracting text..." : "Click to upload PDF"}
                 </div>
                 {isExtracting && (
-                  <div style={styles.spinner}></div>
+                  <div className="study-spinner"></div>
                 )}
               </label>
             </div>
             
             {text && (
-              <div style={styles.successBox}>
+              <div className="study-success-box">
                 ✓ Text extracted successfully ({text.length} characters)
               </div>
             )}
@@ -527,9 +366,9 @@ function Study() {
 
         {/* Stage 2: Goal */}
         {stage === "goal" && (
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Step 2: Set Your Study Goal</h2>
-            <p style={styles.text}>
+          <div className="study-card">
+            <h2 className="study-heading">Step 2: Set Your Study Goal</h2>
+            <p className="study-text">
               What would you like to focus on? This helps generate relevant passages and questions.
             </p>
             
@@ -537,31 +376,18 @@ function Study() {
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               placeholder="e.g., Understand the key concepts of machine learning, Focus on the historical context of World War II..."
-              style={styles.textarea}
+              className="study-textarea"
               rows="4"
             />
             
             <button
               onClick={generateQuestions}
               disabled={isGenerating || !goal.trim()}
-              style={{
-                ...styles.button,
-                ...((isGenerating || !goal.trim()) ? styles.buttonDisabled : {}),
-              }}
-              onMouseEnter={(e) => {
-                if (!isGenerating && goal.trim()) {
-                  e.target.style.background = styles.buttonHover.background;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isGenerating && goal.trim()) {
-                  e.target.style.background = styles.button.background;
-                }
-              }}
+              className="study-button"
             >
               {isGenerating ? (
-                <span>
-                  <span style={{ display: 'inline-block', marginRight: '8px' }}>⏳</span>
+                <span className="study-button-loading">
+                  <span>⏳</span>
                   Generating questions...
                 </span>
               ) : (
@@ -573,32 +399,26 @@ function Study() {
 
         {/* Stage 3: Reading */}
         {stage === "reading" && (
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Step 3: Read and Review</h2>
-            <p style={styles.text}>
+          <div className="study-card">
+            <h2 className="study-heading">Step 3: Read and Review</h2>
+            <p className="study-text">
               Read through these passages carefully. When you're ready, click the button below to test your understanding.
             </p>
             
-            <div style={{ marginBottom: '24px' }}>
+            <div className="study-mb-3">
               {passages.map((passage, index) => (
-                <div key={index} style={styles.passageBox}>
-                  <h3 style={styles.passageTitle}>
+                <div key={index} className="study-passage-box">
+                  <h3 className="study-passage-title">
                     Passage {index + 1}
                   </h3>
-                  <p style={styles.passageText}>{passage}</p>
+                  <p className="study-passage-text">{passage}</p>
                 </div>
               ))}
             </div>
             
             <button
               onClick={() => setStage("quiz")}
-              style={styles.button}
-              onMouseEnter={(e) => {
-                e.target.style.background = styles.buttonHover.background;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = styles.button.background;
-              }}
+              className="study-button"
             >
               I'm Ready
             </button>
@@ -607,24 +427,24 @@ function Study() {
 
         {/* Stage 4: Quiz */}
         {stage === "quiz" && (
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Step 4: Answer the Questions</h2>
-            <p style={styles.text}>
+          <div className="study-card">
+            <h2 className="study-heading">Step 4: Answer the Questions</h2>
+            <p className="study-text">
               Answer these questions based on what you read. Write short, thoughtful responses.
             </p>
             
-            <div style={{ marginBottom: '24px' }}>
+            <div className="study-mb-3">
               {questions.map((question, index) => (
-                <div key={index} style={styles.passageBox}>
-                  <h3 style={styles.passageTitle}>
+                <div key={index} className="study-passage-box">
+                  <h3 className="study-passage-title">
                     Question {index + 1}
                   </h3>
-                  <p style={{ ...styles.text, marginBottom: '16px' }}>{question}</p>
+                  <p className="study-question-text">{question}</p>
                   <textarea
                     value={answers[index]}
                     onChange={(e) => handleAnswerChange(index, e.target.value)}
                     placeholder="Type your answer here..."
-                    style={styles.textarea}
+                    className="study-textarea"
                     rows="4"
                   />
                 </div>
@@ -634,24 +454,11 @@ function Study() {
             <button
               onClick={evaluateAnswers}
               disabled={isEvaluating || answers.some(a => !a.trim())}
-              style={{
-                ...styles.button,
-                ...((isEvaluating || answers.some(a => !a.trim())) ? styles.buttonDisabled : {}),
-              }}
-              onMouseEnter={(e) => {
-                if (!isEvaluating && !answers.some(a => !a.trim())) {
-                  e.target.style.background = styles.buttonHover.background;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isEvaluating && !answers.some(a => !a.trim())) {
-                  e.target.style.background = styles.button.background;
-                }
-              }}
+              className="study-button"
             >
               {isEvaluating ? (
-                <span>
-                  <span style={{ display: 'inline-block', marginRight: '8px' }}>⏳</span>
+                <span className="study-button-loading">
+                  <span>⏳</span>
                   Evaluating your answers...
                 </span>
               ) : (
@@ -663,29 +470,28 @@ function Study() {
 
         {/* Stage 5: Feedback */}
         {stage === "feedback" && (
-          <div style={styles.card}>
-            <h2 style={styles.heading}>Step 5: Your Feedback</h2>
-            <p style={styles.text}>
+          <div className="study-card">
+            <h2 className="study-heading">Step 5: Your Feedback</h2>
+            <p className="study-text">
               Here's how you did and what you can improve:
             </p>
             
-
-            <div style={{ marginBottom: '24px' }}>
+            <div className="study-mb-3">
               {feedback.map((item, index) => (
-                <div key={index} style={styles.passageBox}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-                    <h3 style={styles.passageTitle}>
+                <div key={index} className="study-passage-box">
+                  <div className="study-feedback-header">
+                    <h3 className="study-passage-title">
                       Question {index + 1}
                     </h3>
-                    <span style={getScoreBadgeStyle(item.score)}>
+                    <span className={getScoreBadgeClass(item.score)}>
                       Score: {typeof item.score === 'number' ? item.score.toFixed(1) : item.score}
                     </span>
                   </div>
-                  <p style={{ ...styles.text, marginBottom: '8px' }}>{item.question || questions[index]}</p>
-                  <p style={{ ...styles.text, fontStyle: 'italic', marginBottom: '12px', color: '#888' }}>
+                  <p className="study-question-text study-mb-1">{item.question || questions[index]}</p>
+                  <p className="study-answer-text">
                     Your answer: {answers[index]}
                   </p>
-                  <p style={{ ...styles.text, fontWeight: '500', color: '#333' }}>
+                  <p className="study-feedback-text">
                     {item.comment || item.feedback || "No feedback provided."}
                   </p>
                 </div>
@@ -694,26 +500,13 @@ function Study() {
             
             <button
               onClick={resetStudy}
-              style={styles.button}
-              onMouseEnter={(e) => {
-                e.target.style.background = styles.buttonHover.background;
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = styles.button.background;
-              }}
+              className="study-button"
             >
               Start New Study Session
             </button>
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,36 +1,114 @@
-/* src/components/Navbar.css */
+/* Navbar Component Styles */
 .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position:relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #667eea;
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: color 0.3s ease;
+}
+
+.nav a:hover {
+  color: #764ba2;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-menu li a {
+  font-size: 1rem;
+  color: #4a5568;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-menu li a:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #667eea;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.nav-toggle:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .nav {
+    padding: 1rem;
   }
-  
-  .nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-  }
-  
+
   .nav-toggle {
+    display: block;
+  }
+
+  .nav-menu {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: white;
+    padding: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    gap: 0.5rem;
+    border-radius: 0 0 12px 12px;
   }
-  
-  @media (max-width: 768px) {
-    .nav-toggle {
-      display: block;
-    }
-    .nav-menu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      flex-direction: column;
-    }
-    .nav-menu.open {
-      display: flex;
-    }
+
+  .nav-menu.open {
+    display: flex;
   }
+
+  .nav-menu li {
+    width: 100%;
+  }
+
+  .nav-menu li a {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    padding: 0.75rem;
+  }
+
+  .nav a {
+    font-size: 1.1rem;
+  }
+}
