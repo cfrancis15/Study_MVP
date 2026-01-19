@@ -15,6 +15,7 @@ export default function Navbar() {
       <ul className={`nav-menu ${open ? 'open' : ''}`}>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/pricing">Pricing</Link></li>
+        <li><Link to='/study'>Study</Link></li>
         <li>
           <SignedOut><SignInButton /></SignedOut>
           <SignedIn><UserButton /></SignedIn>

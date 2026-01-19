@@ -8,6 +8,7 @@ import './index.css'
 import Layout from './components/Layout'
 import App from './App.jsx'
 import Pricing from './routes/Pricing.jsx'
+import Study from './routes/Study.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
           <Route element={<Layout />}>
             <Route path='/' element={<App/>} />
             <Route path='/pricing' element={<Pricing/>} />
+            <Route path='/study' element={<Study/>} />
           </Route>
         </Routes>
       </ClerkProvider>
