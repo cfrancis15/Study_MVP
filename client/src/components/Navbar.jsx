@@ -17,7 +17,7 @@ export default function Navbar() {
         <li><Link to="/pricing">Pricing</Link></li>
         <li><Link to='/study'>Study</Link></li>
         <li>
-          <SignedOut><SignInButton /></SignedOut>
+          <SignedOut><SignInButton mode='modal'/></SignedOut>
           <SignedIn><UserButton /></SignedIn>
         </li>
       </ul>

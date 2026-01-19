@@ -1,4 +1,3 @@
-// src/main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
@@ -19,7 +18,10 @@ if(!PUBLISHABLE_KEY){
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <ClerkProvider 
+        publishableKey={PUBLISHABLE_KEY}
+
+      >
         <Routes>
           <Route element={<Layout />}>
             <Route path='/' element={<App/>} />
