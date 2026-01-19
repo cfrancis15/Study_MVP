@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Protect } from '@clerk/clerk-react';
 import * as pdfjsLib from 'pdfjs-dist';
 // Import worker as a URL for Vite
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -304,7 +305,19 @@ function Study() {
 
   return (
     <div className="study-container">
-      <div className="study-wrapper">
+    <div className="study-wrapper">
+    <Protect
+        fallback={
+          <div className="study-card" style={{ textAlign: 'center', padding: '3rem' }}>
+            <h2>Sign In Required</h2>
+            <p>Please sign in to access the Study Coach feature.</p>
+          </div>
+        }
+      >
+       
+
+
+      
         {/* Header */}
         <div className="study-header">
           <h1 className="study-title">Study Coach</h1>
@@ -506,7 +519,10 @@ function Study() {
             </button>
           </div>
         )}
-      </div>
+      
+      
+      </Protect>
+    </div>
     </div>
   );
 }
