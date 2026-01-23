@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Protect } from '@clerk/clerk-react';
+import { Protect, useAuth } from '@clerk/clerk-react';
 import * as pdfjsLib from 'pdfjs-dist';
 // Import worker as a URL for Vite
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -19,6 +19,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
  * 5. Evaluate answers and provide feedback
  */
 function Study() {
+  const { getToken } = useAuth();
+  
   // Stage management: "upload" | "goal" | "reading" | "quiz" | "feedback"
   const [stage, setStage] = useState("upload");
   
@@ -103,7 +105,7 @@ function Study() {
 
   /**
    * Generate passages and questions from the study text and goal
-   * Calls OpenAI API to get relevant passages and comprehension questions
+   * Calls backend API to get relevant passages and comprehension questions
    */
   const generateQuestions = async () => {
     if (!goal.trim()) {
@@ -115,43 +117,27 @@ function Study() {
     setError("");
     
     try {
-      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (!apiKey) {
-        throw new Error("OpenAI API key not found. Please add VITE_OPENAI_API_KEY to your .env file.");
-      }
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const token = await getToken();
       
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      const response = await fetch(`${apiUrl}/api/generate-questions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          model: "gpt-5-nano",
-          messages: [
-            {
-              role: "system",
-              content: "You are a study coach that helps learners develop deep understanding through recall practice. Always respond with valid JSON only, no additional text."
-            },
-            {
-              role: "user",
-              content: `Given this study text:\n${text.substring(0, 8000)}\n\nand the user's goal: ${goal}\n\nSelect three short relevant passages (max 250 words each) and generate three short-answer questions to test comprehension. Return structured JSON in this exact format: {"passages": ["passage 1 text", "passage 2 text", "passage 3 text"], "questions": ["question 1", "question 2", "question 3"]}`
-            }
-          ],
-          response_format: { type: "json_object" }
-        })
+        body: JSON.stringify({ text, goal })
       });
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `API error: ${response.statusText}`);
+        throw new Error(errorData.error || `API error: ${response.statusText}`);
       }
       
       const data = await response.json();
-      const content = JSON.parse(data.choices[0].message.content);
       
-      setPassages(content.passages || []);
-      setQuestions(content.questions || []);
+      setPassages(data.passages || []);
+      setQuestions(data.questions || []);
       setStage("reading");
     } catch (err) {
       setError(`Failed to generate questions: ${err.message}`);
@@ -163,7 +149,7 @@ function Study() {
 
   /**
    * Evaluate user's answers and provide feedback
-   * Calls OpenAI API to assess understanding
+   * Calls backend API to assess understanding
    */
   const evaluateAnswers = async () => {
     if (answers.some(answer => !answer.trim())) {
@@ -175,62 +161,26 @@ function Study() {
     setError("");
     
     try {
-      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (!apiKey) {
-        throw new Error("OpenAI API key not found.");
-      }
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const token = await getToken();
       
-      
-
-
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      const response = await fetch(`${apiUrl}/api/evaluate-answers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          model: "gpt-5-nano",
-          messages: [
-            {
-              role: "system",
-              content: "You are a study coach evaluating a student's understanding. Always respond with valid JSON only, no additional text."
-            },
-            {
-              role: "user",
-              content: `Here is the study text:\n${text.substring(0, 8000)}\n\nGoal: ${goal}\n\nQuestions:\n${questions.map((q, i) => `${i + 1}. ${q}`).join("\n")}\n\nUser Answers:\n${answers.map((a, i) => `${i + 1}. ${a}`).join("\n")}\n\nEvaluate each answer on a scale of 0-1 and give a brief 1-2 sentence feedback for each. Return a JSON object with a "feedback" key containing an array. Use this exact format: {"feedback": [{"question": "question text", "score": 0.8, "comment": "feedback text"}, ...]}`
-            }
-          ],
-          response_format: { type: "json_object" }
-        })
+        body: JSON.stringify({ text, goal, questions, answers })
       });
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `API error: ${response.statusText}`);
+        throw new Error(errorData.error || `API error: ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log("🔵 Raw API Response:", data);  // ADD THIS
-      console.log("🔵 Message Content (raw string):", data.choices[0].message.content);  // ADD THIS
-
-      const content = JSON.parse(data.choices[0].message.content);
-      console.log("🟢 Parsed Content:", content);  // ADD THIS
-      console.log("🟢 Is Array?", Array.isArray(content));  // ADD THIS
-      console.log("🟢 Content Type:", typeof content);  // ADD THIS
-      
-      // Handle both array and object with feedback key
-      const feedbackArray = Array.isArray(content) 
-  ? content 
-  : (content.response || content.feedback ||content.results || []);
-      console.log("🟡 Extracted Feedback Array:", feedbackArray);  // ADD THIS
-      console.log("🟡 Feedback Array Length:", feedbackArray.length);
-      
-      setFeedback(feedbackArray);
-      console.log("🟣 State updated, feedback set to:", feedbackArray);  // ADD THIS
+      setFeedback(data.feedback || []);
       setStage("feedback");
-      console.log("🟣 Stage set to 'feedback'");
-      
     } catch (err) {
       setError(`Failed to evaluate answers: ${err.message}`);
       console.error("Evaluation error:", err);
