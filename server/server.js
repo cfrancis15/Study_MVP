@@ -50,9 +50,9 @@ const rateLimiter = rateLimit({
   max: (req) => {
     // Check user's subscription from Clerk session claims
     const subscription = req.auth?.sessionClaims?.subscription || 'free';
-    return subscription === 'paid' ? 30 : 10;
+    return subscription === 'paid' ? 100 : 20;
   },
-  message: { error: 'Rate limit exceeded. Please upgrade to premium for more requests.' },
+  message: { error: 'Rate limit exceeded. Please upgrade to premium for more requests, or wait until tomorrow.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
